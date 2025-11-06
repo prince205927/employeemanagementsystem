@@ -3,6 +3,9 @@ package com.example.ems.service;
 import com.example.ems.dto.EmployeeDTO;
 import com.example.ems.entity.Employee;
 import com.example.ems.repository.EmployeeRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,5 +33,42 @@ public class EmployeeService {
 		entity.setSalary(dto.getSalary());
 		entity.setDepartment(dto.getDepartment());
 
+	}
+	
+	public Employee updateEmployee(Long id, EmployeeDTO employeeDTO) {
+		Employee employee = employeeRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Employee not found with id"+ id));
+		if(!employee.getEmail().equals(employeeDTO.getEmail()) && employeeRepository.existsByEmail(employeeDTO.getEmail())) {
+			throw new RuntimeException("Email is already in use by another employee");
+		}
+		updateEmployeeFields(employee,employeeDTO);
+		return employeeRepository.save(employee);
+	}
+	
+	private void updateEmployeeFields(Employee employee, EmployeeDTO dto) {
+		if(dto.getFirstName()!=null) {
+			employee.setFirstName(dto.getFirstName());
+		}
+		if(dto.getLastName()!=null) {
+			employee.setLastName(dto.getLastName());
+		}
+		if(dto.getEmail()!=null) {
+			employee.setEmail(dto.getEmail());
+		}
+		if(dto.getPhone()!=null) {
+			employee.setPhone(dto.getPhone());
+		}
+		if(dto.getPosition()!=null) {
+			employee.setPosition(dto.getPosition());
+		}
+		if(dto.getSalary()!=null) {
+			employee.setSalary(dto.getSalary());
+		}
+		if(dto.getDepartment()!=null) {
+			employee.setDepartment(dto.getDepartment());
+		}
+	}
+	
+	public Employee getEmployeeById(Long id) {
+		return employeeRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Employee not found with id"+ id));
 	}
 }
