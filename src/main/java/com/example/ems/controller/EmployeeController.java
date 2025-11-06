@@ -1,4 +1,6 @@
 package com.example.ems.controller;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,4 +51,18 @@ public class EmployeeController {
 		Employee employee = employeeService.getEmployeeById(id);
 		return new ResponseEntity<>(employee,HttpStatus.OK);
 	}
-}
+	
+	@GetMapping
+	public ResponseEntity<List<Employee>> getAllEmployees(){
+	 try {
+		 List<Employee> employees = employeeService.getAllEmployees();
+		 return new ResponseEntity<>(employees,HttpStatus.OK);
+	 }
+	 catch(Exception e) {
+		 System.out.println("Error retreiving employees" + e.getMessage());
+		 throw e;
+	 }
+	}
+	
+	}
+
