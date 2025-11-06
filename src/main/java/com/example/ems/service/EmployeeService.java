@@ -77,4 +77,9 @@ public class EmployeeService {
 	public List<Employee> getAllEmployees(){
 		return employeeRepository.findAll();
 	}
+	
+	public void deleteEmployee(Long id) {
+		Employee employee = employeeRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Employee not found with id"+ id));
+		employeeRepository.delete(employee);
+	}
 }
