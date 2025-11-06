@@ -1,10 +1,13 @@
 package com.example.ems.controller;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +20,8 @@ import com.example.ems.entity.Employee;
 import com.example.ems.service.EmployeeService;
 
 import org.springframework.web.bind.annotation.RequestBody;
+
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 
@@ -64,5 +69,23 @@ public class EmployeeController {
 	 }
 	}
 	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Map<String,String>> deleteEmployee(@PathVariable Long id){
+		try {
+			employeeService.deleteEmployee(id);
+			Map<String,String> response = new HashMap<>();
+			response.put("message", "Employee record deleted successfully");
+			return new ResponseEntity<>(response,HttpStatus.OK);
+		}
+		catch(EntityNotFoundException e) {
+			throw e;
+		}
+		catch(Exception e) {
+			System.out.println("Error deleting employee"+ e.getMessage());
+			throw e;
+		}
 	}
+	
+
+}
 
