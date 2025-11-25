@@ -43,6 +43,21 @@ public class EmployeeManagementService {
         return fullTimeRepository.save(employee);
     }
     
+    
+	public FullTimeEmployee createFullTimeEmployee(String name, String email, String department, String position,Double annualSalary, Double bonus, Integer paidLeaveDays) {
+	    EmployeeCreationDTO dto = new EmployeeCreationDTO();
+	    dto.setName(name);
+	    dto.setEmail(email);
+	    dto.setDepartment(department);
+	    dto.setPosition(position);
+	    dto.setAnnualSalary(annualSalary);
+	    dto.setBonus(bonus);
+	    dto.setPaidLeaveDays(paidLeaveDays);
+	
+	    return createFullTimeEmployee(dto);
+	
+	}
+    
     private PartTimeEmployee createPartTimeEmployee(EmployeeCreationDTO dto) {
         validatePartTimeFields(dto);
         

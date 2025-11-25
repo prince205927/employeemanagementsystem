@@ -47,7 +47,6 @@ The **Employee Management System** is a Spring Boot application designed to mana
 | Method | Endpoint                        | Description                  | Query Params                              |
 |--------|---------------------------------|------------------------------|-------------------------------------------|
 | POST   | `/api/auth/register`            | Register a new user          | None                                      |
-| POST   | `/api/auth/login`               | User login                   | None                                      |
 | POST   | `/api/employees`                | Create employee (any type)   | None                                      |
 | GET    | `/api/employees`                | Get all employees            | `type=ALL/FULL_TIME/PART_TIME`           |
 | GET    | `/api/employees/{id}`           | Get employee by ID           | `type=FULL_TIME/PART_TIME`               |
@@ -128,21 +127,35 @@ public Map<String, Object> calculateSalary(Long id, String type) {
 - Method behavior is determined at compile time based on method signature. (Method overloading)
 - Overloaded createEmployee() Methods
 ```java
-public BaseEmployee createEmployee(String name, String email, String type) {
-    EmployeeCreationDTO dto = new EmployeeCreationDTO();
-    dto.setName(name);
-    dto.setEmail(email);
-    dto.setType(type);
-    return createEmployee(dto);
-}
-public BaseEmployee createEmployee(String name, String email, String department, String type) {
-    EmployeeCreationDTO dto = new EmployeeCreationDTO();
-    dto.setName(name);
-    dto.setEmail(email);
-    dto.setDepartment(department);
-    dto.setType(type);
-    return createEmployee(dto);
-}
+private FullTimeEmployee createFullTimeEmployee(EmployeeCreationDTO dto) {
+        validateFullTimeFields(dto);
+        
+        FullTimeEmployee employee = new FullTimeEmployee();
+        employee.setName(dto.getName());
+        employee.setEmail(dto.getEmail());
+        employee.setDepartment(dto.getDepartment());
+        employee.setPosition(dto.getPosition());
+        employee.setAnnualSalary(dto.getAnnualSalary());
+        employee.setBonus(dto.getBonus());
+        employee.setPaidLeaveDays(dto.getPaidLeaveDays());
+        
+        return fullTimeRepository.save(employee);
+    }
+ 
+public FullTimeEmployee createFullTimeEmployee(String name, String email, String department, String position,Double annualSalary, Double bonus, Integer paidLeaveDays) {
+	    EmployeeCreationDTO dto = new EmployeeCreationDTO();
+	    dto.setName(name);
+	    dto.setEmail(email);
+	    dto.setDepartment(department);
+	    dto.setPosition(position);
+	    dto.setAnnualSalary(annualSalary);
+	    dto.setBonus(bonus);
+	    dto.setPaidLeaveDays(paidLeaveDays);
+	
+	    return createFullTimeEmployee(dto);
+	
+	}
+    
 ```
 
 ### 4. **Abstraction**
