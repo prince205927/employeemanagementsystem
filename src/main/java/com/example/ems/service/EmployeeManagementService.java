@@ -139,6 +139,50 @@ public class EmployeeManagementService {
         }
     }
     
+    public BaseEmployee updateEmployee(Long id, String type, EmployeeCreationDTO dto) {
+        if ("FULL_TIME".equalsIgnoreCase(type)) {
+            return updateFullTimeEmployee(id, dto);
+        } else if ("PART_TIME".equalsIgnoreCase(type)) {
+            return updatePartTimeEmployee(id, dto);
+        } else {
+            throw new IllegalArgumentException("Invalid employee type. Use FULL_TIME or PART_TIME");
+        }
+    }
+
+    private FullTimeEmployee updateFullTimeEmployee(Long id, EmployeeCreationDTO dto) {
+        FullTimeEmployee employee = fullTimeRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Full-time employee not found with id: " + id));
+        
+        validateFullTimeFields(dto);
+        
+        employee.setName(dto.getName());
+        employee.setEmail(dto.getEmail());
+        employee.setDepartment(dto.getDepartment());
+        employee.setPosition(dto.getPosition());
+        employee.setAnnualSalary(dto.getAnnualSalary());
+        employee.setBonus(dto.getBonus());
+        employee.setPaidLeaveDays(dto.getPaidLeaveDays());
+        
+        return fullTimeRepository.save(employee);
+    }
+
+    private PartTimeEmployee updatePartTimeEmployee(Long id, EmployeeCreationDTO dto) {
+        PartTimeEmployee employee = partTimeRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Part-time employee not found with id: " + id));
+        
+        validatePartTimeFields(dto);
+        
+        employee.setName(dto.getName());
+        employee.setEmail(dto.getEmail());
+        employee.setDepartment(dto.getDepartment());
+        employee.setPosition(dto.getPosition());
+        employee.setHourlyRate(dto.getHourlyRate());
+        employee.setHoursPerWeek(dto.getHoursPerWeek());
+        employee.setWeeksPerYear(dto.getWeeksPerYear());
+        
+        return partTimeRepository.save(employee);
+    }
+    
     private void validatePartTimeFields(EmployeeCreationDTO dto) {
         if (dto.getHourlyRate() == null || dto.getHourlyRate() <= 0) {
             throw new IllegalArgumentException("Hourly rate is required for part-time employees");

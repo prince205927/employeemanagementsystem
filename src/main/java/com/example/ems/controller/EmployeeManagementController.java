@@ -67,7 +67,19 @@ public class EmployeeManagementController {
         response.put("salaryDetails", salaryDetails);
         return ResponseEntity.ok(response);
     }
-    
+   @PutMapping("/{id}")
+   public ResponseEntity<Map<String, Object>> updateEmployee(
+           @PathVariable Long id,
+           @RequestParam String type,
+           @Valid @RequestBody EmployeeCreationDTO dto) {
+       BaseEmployee updatedEmployee = employeeService.updateEmployee(id, type, dto);
+       
+       Map<String, Object> response = new HashMap<>();
+       response.put("message", "Employee updated successfully");
+       response.put("employee", updatedEmployee);
+       response.put("monthlySalary", updatedEmployee.calculateSalary());
+       return ResponseEntity.ok(response);
+   }
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> deleteEmployee(
             @PathVariable Long id,

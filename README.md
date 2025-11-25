@@ -7,11 +7,10 @@ The **Employee Management System** is a Spring Boot application designed to mana
 
 ## Features
 - **User Registration**
-- **User Login**
-- **Add Employee** – Create new employee records
-- **View Employees** – Retrieve all or specific employee details
-- **Update Employee** – Modify existing employee information
-- **Delete Employee** – Remove employee records
+- **Create Full-Time and Part-Time Employees**
+- **Retrieve Employees with Filtering**
+- **Automatic Salary Calculation (different for each type)** 
+- **Delete Employee Records**
 
 
 ## Tech Stack
@@ -45,40 +44,136 @@ The **Employee Management System** is a Spring Boot application designed to mana
 
 ##  API Endpoints
 
-| Method  | Endpoint                  | Description                |
-|---------|---------------------------|---------------------------|
-| POST    | `/api/auth/register`          | Register a new user      |
-| POST    | `/api/auth/login`             | User login               |
-| POST    | `/api/employees`         | Add new employee         |
-| GET     | `/api/employees`         | Get all employees        |
-| GET     | `/api/employees/{id}`    | Get employee by ID       |
-| PUT     | `/api/employees/{id}`    | Update employee details  |
-| DELETE  | `/api/employees/{id}`    | Delete employee          |
+| Method | Endpoint                        | Description                  | Query Params                              |
+|--------|---------------------------------|------------------------------|-------------------------------------------|
+| POST   | `/api/auth/register`            | Register a new user          | None                                      |
+| POST   | `/api/auth/login`               | User login                   | None                                      |
+| POST   | `/api/employees`                | Create employee (any type)   | None                                      |
+| GET    | `/api/employees`                | Get all employees            | `type=ALL/FULL_TIME/PART_TIME`           |
+| GET    | `/api/employees/{id}`           | Get employee by ID           | `type=FULL_TIME/PART_TIME`               |
+| GET    | `/api/employees/{id}/salary`    | Calculate salary             | `type=FULL_TIME/PART_TIME`               |
+| PUT    | `/api/employees/{id}`           | Update employee details      | `type=FULL_TIME/PART_TIME`               |
+| DELETE | `/api/employees/{id}`           | Delete employee              | `type=FULL_TIME/PART_TIME`               |
+
 
 
 ## Object-Oriented Programming (OOP) Concepts Used
 
 This project leverages core OOP principles to ensure modularity, maintainability, and scalability:
 
-### 1. **Encapsulation**
-- All employee-related data (e.g., `name`, `email`, `department`, `salary`) is encapsulated within the `Employee` class.
-- Access to fields is controlled using **getters and setters**, ensuring data integrity.
+### 1. **Inheritance**
+- Child classes inherit properties and methods from parent classes.
 
-### 2. **Inheritance**
-- Common functionality is abstracted into **base classes** or **interfaces**.
-- For example, service classes may implement interfaces like `EmployeeService` to enforce a contract.
+#### Example 1: BaseEntity (Abstract Parent Class)
+```java
+public abstract class BaseEntity {
+    private Long id;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    // Common fields for all entities
+}
+```
 
-### 3. **Polymorphism**
-- Achieved through **method overriding** in service implementations.
-- Example: Different implementations of `saveEmployee()` or `findEmployee()` can exist for different data sources.
+**Child Classes:**
+- `User.java` extends `BaseEntity`
+- `BaseEmployee.java` extends `BaseEntity`
+
+#### Example 2: BaseEmployee (Abstract Parent Class)
+```java
+public abstract class BaseEmployee extends BaseEntity {
+    private String name;
+    private String email;
+    private String department;
+    private String position;
+    
+    // Abstract methods that children must implement
+    public abstract Double calculateSalary();
+    public abstract String getEmployeeType();
+}
+```
+
+**Child Classes:**
+- `FullTimeEmployee.java` extends `BaseEmployee`
+- `PartTimeEmployee.java` extends `BaseEmployee`
+
+### 2. **Dynamic Polymorphism**
+- Method behavior is determined at runtime based on the actual object type.
+- The method that implements polymorphism here is **calculateSalary()**
+
+**In FullTimeEmployee.java:**
+```java
+@Override
+public Double calculateSalary() {
+    return (annualSalary + bonus) / 12;  
+}
+```
+
+**In PartTimeEmployee.java:**
+```java
+@Override
+public Double calculateSalary() {
+    return (hourlyRate * hoursPerWeek * weeksPerYear) / 12;  
+}
+```
+
+```java
+public Map<String, Object> calculateSalary(Long id, String type) {
+    BaseEmployee employee = getEmployeeById(id, type);
+    // It calls different implementations based on actual object type
+    Double monthlySalary = employee.calculateSalary();  
+}
+```
+
+### 3. **Static Polymorphism**
+- Method behavior is determined at compile time based on method signature. (Method overloading)
+- Overloaded createEmployee() Methods
+```java
+public BaseEmployee createEmployee(String name, String email, String type) {
+    EmployeeCreationDTO dto = new EmployeeCreationDTO();
+    dto.setName(name);
+    dto.setEmail(email);
+    dto.setType(type);
+    return createEmployee(dto);
+}
+public BaseEmployee createEmployee(String name, String email, String department, String type) {
+    EmployeeCreationDTO dto = new EmployeeCreationDTO();
+    dto.setName(name);
+    dto.setEmail(email);
+    dto.setDepartment(department);
+    dto.setType(type);
+    return createEmployee(dto);
+}
+```
 
 ### 4. **Abstraction**
-- Business logic is separated from implementation details using **interfaces** and **abstract classes**.
-- Controllers interact with services without knowing the underlying persistence logic.
+- Hiding implementation details and showing only essential features.
 
-### 5. **Composition**
-- Classes like `EmployeeController` use service classes via **dependency injection** rather than creating objects directly.
-- Promotes loose coupling and better testability.
+**BaseEmployee.java:**
+```java
+public abstract class BaseEmployee extends BaseEntity {
+    // Abstract methods
+    public abstract Double calculateSalary();
+    public abstract String getEmployeeType();
+}
+```
+
+### 5. **Encapsulation**
+- Bundling data and methods together, hiding internal state.
+**In FullTimeEmployee.java:**
+```java
+@Entity
+public class FullTimeEmployee extends BaseEmployee {
+    
+    // Private fields 
+    private Double annualSalary;
+    private Double bonus;
+    private Integer paidLeaveDays;
+    
+    // Public getters and setters
+    public Double getAnnualSalary() { return annualSalary; }
+    public void setAnnualSalary(Double annualSalary) { this.annualSalary = annualSalary; }
+}
+```
 
 
 

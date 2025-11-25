@@ -31,9 +31,6 @@ public abstract class BaseEntity {
     @Column(name = "is_active")
     private Boolean isActive = true;
     
-    // Abstract method that child classes must implement
-    public abstract String getEmployeeType();
-    
     // Common method for all entities
     public void deactivate() {
         this.isActive = false;
