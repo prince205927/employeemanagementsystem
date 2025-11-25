@@ -171,7 +171,7 @@ public abstract class BaseEmployee extends BaseEntity {
 ```
 
 ### 5. **Encapsulation**
-- Bundling data and methods together, hiding internal state.
+- Bundling data and methods together, hiding internal state. The @Data annotation from Lombok generates getter and setter methods for all the fields of the class.
 **In FullTimeEmployee.java:**
 ```java
 @Entity
