@@ -120,7 +120,7 @@ public Double calculateSalary() {
 public Map<String, Object> calculateSalary(Long id, String type) {
     BaseEmployee employee = getEmployeeById(id, type);
     // It calls different implementations based on actual object type
-    Double monthlySalary = employee.calculateSalary();  
+    salaryDetails.put("monthlySalary", employee.calculateSalary()); 
 }
 ```
 
