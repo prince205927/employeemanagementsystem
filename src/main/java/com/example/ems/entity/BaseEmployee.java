@@ -25,9 +25,7 @@ public abstract class BaseEmployee extends BaseEntity {
     @Column(nullable = false)
     private String position;
     
-    // Abstract method - must be implemented by subclasses (Polymorphism)
     public abstract Double calculateSalary();
     
-    // Abstract method for employee type
     public abstract String getEmployeeType();
 }
