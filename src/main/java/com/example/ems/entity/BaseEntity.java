@@ -1,4 +1,3 @@
-// src/main/java/com/ems/entity/BaseEntity.java
 package com.example.ems.entity;
 
 import jakarta.persistence.*;
