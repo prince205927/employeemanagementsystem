@@ -32,7 +32,7 @@ public abstract class BaseEntity {
     private Boolean isActive = true;
     
     // Abstract method that child classes must implement
-    public abstract String getEntityType();
+    public abstract String getEmployeeType();
     
     // Common method for all entities
     public void deactivate() {

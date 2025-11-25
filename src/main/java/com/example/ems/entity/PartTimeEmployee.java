@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public abstract class PartTimeEmployee extends BaseEmployee {
+public class PartTimeEmployee extends BaseEmployee {
     
     @Column(nullable = false)
     private Double hourlyRate;
